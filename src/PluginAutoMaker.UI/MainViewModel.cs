@@ -210,7 +210,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "open",
-                    Arguments = $""{OutputPath}"",
+                    Arguments = $"{OutputPath}",
                     UseShellExecute = false
                 });
             }
@@ -219,7 +219,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
                 Process.Start(new ProcessStartInfo
                 {
                     FileName = "xdg-open",
-                    Arguments = $""{OutputPath}"",
+                    Arguments = $"{OutputPath}",
                     UseShellExecute = false
                 });
             }
