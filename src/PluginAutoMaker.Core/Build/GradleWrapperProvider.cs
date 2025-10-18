@@ -1,4 +1,5 @@
 using System.IO.Compression;
+using System.Linq;
 using PluginAutoMaker.Core.Logging;
 
 namespace PluginAutoMaker.Core.Build;
@@ -40,7 +41,20 @@ public sealed class GradleWrapperProvider : IGradleWrapperProvider, IDisposable
         }
 
         using var archive = ZipFile.OpenRead(distributionFile);
-        var wrapperEntry = archive.Entries.FirstOrDefault(e => e.FullName.EndsWith("gradle-wrapper.jar", StringComparison.OrdinalIgnoreCase));
+        var wrapperEntry = archive.Entries
+            .Select(entry => (Entry: entry, FileName: Path.GetFileName(entry.FullName)))
+            .FirstOrDefault(tuple => string.Equals(tuple.FileName, "gradle-wrapper.jar", StringComparison.OrdinalIgnoreCase))
+            .Entry;
+
+        if (wrapperEntry is null)
+        {
+            wrapperEntry = archive.Entries
+                .Select(entry => (Entry: entry, FileName: Path.GetFileName(entry.FullName)))
+                .FirstOrDefault(tuple => tuple.FileName.StartsWith("gradle-wrapper", StringComparison.OrdinalIgnoreCase) &&
+                                         tuple.FileName.EndsWith(".jar", StringComparison.OrdinalIgnoreCase))
+                .Entry;
+        }
+
         if (wrapperEntry is null)
         {
             throw new InvalidOperationException("Gradleディストリビューションからwrapper.jarを特定できませんでした。");
