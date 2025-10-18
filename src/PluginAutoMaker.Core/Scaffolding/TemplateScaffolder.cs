@@ -1,5 +1,7 @@
+using System.IO;
 using System.Text;
 using PluginAutoMaker.Core.Logging;
+using PluginAutoMaker.Core.Orchestration;
 using PluginAutoMaker.Spec.Models;
 
 namespace PluginAutoMaker.Core.Scaffolding;
@@ -39,7 +41,7 @@ public sealed class TemplateScaffolder : IScaffolder
         var pluginYamlPath = Path.Combine(resourcesPath, "plugin.yml");
         File.WriteAllText(pluginYamlPath, spec.ToYaml(), Encoding.UTF8);
 
-        CreateGradleWrapperScripts(projectDir);
+        CreateGradleWrapperScripts(projectDir, context.GradleVersion);
 
         _log.Publish(LogLevel.Information, "内蔵テンプレートでGradleプロジェクトを生成しました。");
 
@@ -100,46 +102,48 @@ public sealed class TemplateScaffolder : IScaffolder
 
     private static string BuildMainClass(PluginSpecification spec)
     {
-        var commandHandlers = new StringBuilder();
+        var builder = new StringBuilder();
+        builder.AppendLine($"package {spec.PackageName};");
+        builder.AppendLine();
+        builder.AppendLine("import net.kyori.adventure.text.Component;");
+        builder.AppendLine("import org.bukkit.command.Command;");
+        builder.AppendLine("import org.bukkit.command.CommandSender;");
+        builder.AppendLine("import org.bukkit.plugin.java.JavaPlugin;");
+        builder.AppendLine();
+        builder.AppendLine("public final class Main extends JavaPlugin {");
+        builder.AppendLine("    @Override");
+        builder.AppendLine("    public void onEnable() {");
+        builder.AppendLine($"        getLogger().info(\"{EscapeJavaString(spec.PluginName)} v{EscapeJavaString(spec.Version)} を有効化しました。\");");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.AppendLine("    @Override");
+        builder.AppendLine("    public void onDisable() {");
+        builder.AppendLine($"        getLogger().info(\"{EscapeJavaString(spec.PluginName)} v{EscapeJavaString(spec.Version)} を無効化しました。\");");
+        builder.AppendLine("    }");
+        builder.AppendLine();
+        builder.AppendLine("    @Override");
+        builder.AppendLine("    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {");
+
         foreach (var command in spec.Commands)
         {
-            commandHandlers.AppendLine("        if (command.getName().equalsIgnoreCase(\"" + command.Name + "\")) {");
-            commandHandlers.AppendLine("            sender.sendMessage(Component.text(\"" + command.Description.Replace("\"", "\\\"") + "\"));");
-            commandHandlers.AppendLine("            return true;");
-            commandHandlers.AppendLine("        }");
+            builder.AppendLine($"        if (command.getName().equalsIgnoreCase(\"{EscapeJavaString(command.Name)}\")) {{");
+            builder.AppendLine($"            sender.sendMessage(Component.text(\"{EscapeJavaString(command.Description)}\"));");
+            builder.AppendLine("            return true;");
+            builder.AppendLine("        }");
         }
 
-        return $"""
-package {spec.PackageName};
+        builder.AppendLine("        sender.sendMessage(Component.text(\"未知のコマンドです。\"));");
+        builder.AppendLine("        return true;");
+        builder.AppendLine("    }");
+        builder.AppendLine("}");
 
-import net.kyori.adventure.text.Component;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
-
-public final class Main extends JavaPlugin {{
-    @Override
-    public void onEnable() {{
-        getLogger().info("{spec.PluginName} v{spec.Version} を有効化しました。");
-    }}
-
-    @Override
-    public void onDisable() {{
-        getLogger().info("{spec.PluginName} v{spec.Version} を無効化しました。");
-    }}
-
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {{
-{commandHandlers.ToString().TrimEnd()}
-        sender.sendMessage(Component.text("未知のコマンドです。"));
-        return true;
-    }}
-}}
-""";
+        return builder.ToString();
     }
 
-    private static void CreateGradleWrapperScripts(string projectDir)
+    private static void CreateGradleWrapperScripts(string projectDir, string gradleVersion)
     {
+        var version = string.IsNullOrWhiteSpace(gradleVersion) ? "8.7" : gradleVersion;
+
         var gradlew = """#!/bin/sh
 APP_HOME=$(cd "$(dirname "$0")" && pwd)
 CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
@@ -149,11 +153,12 @@ if [ -n "$JAVA_HOME" ]; then
 fi
 exec "$JAVA_EXE" -Dfile.encoding=UTF-8 -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
 """;
+
         var gradlewBat = """@ECHO OFF
 SET APP_HOME=%~dp0
-SET CLASSPATH=%APP_HOME%gradle\\wrapper\\gradle-wrapper.jar
+SET CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
 IF NOT "%JAVA_HOME%"=="" (
-  SET JAVA_EXE=%JAVA_HOME%\\bin\\java.exe
+  SET JAVA_EXE=%JAVA_HOME%\bin\java.exe
 ) ELSE (
   SET JAVA_EXE=java
 )
@@ -167,23 +172,33 @@ IF NOT "%JAVA_HOME%"=="" (
         {
             try
             {
-                var fileInfo = new FileInfo(Path.Combine(projectDir, "gradlew"));
-                fileInfo.Refresh();
-                var current = fileInfo.Attributes;
-                fileInfo.Attributes = current & ~FileAttributes.ReadOnly;
+                var gradlewPath = Path.Combine(projectDir, "gradlew");
+                if (File.Exists(gradlewPath))
+                {
+                    File.SetUnixFileMode(gradlewPath, UnixFileMode.UserRead | UnixFileMode.UserWrite | UnixFileMode.UserExecute |
+                        UnixFileMode.GroupRead | UnixFileMode.GroupExecute | UnixFileMode.OtherRead | UnixFileMode.OtherExecute);
+                }
             }
             catch
             {
-                // ignore
+                // ignore permission errors
             }
         }
 
-        var properties = """distributionBase=GRADLE_USER_HOME
+        var properties = $"""distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-8.7-bin.zip
+distributionUrl=https\://services.gradle.org/distributions/gradle-{version}-bin.zip
 zipStoreBase=GRADLE_USER_HOME
 zipStorePath=wrapper/dists
 """;
+
         File.WriteAllText(Path.Combine(projectDir, "gradle", "wrapper", "gradle-wrapper.properties"), properties, Encoding.UTF8);
+    }
+
+    private static string EscapeJavaString(string value)
+    {
+        return value
+            .Replace("\\", "\\\\")
+            .Replace("\"", "\\\"");
     }
 }
