@@ -144,26 +144,28 @@ public sealed class TemplateScaffolder : IScaffolder
     {
         var version = string.IsNullOrWhiteSpace(gradleVersion) ? "8.7" : gradleVersion;
 
-        var gradlew = """#!/bin/sh
-APP_HOME=$(cd "$(dirname "$0")" && pwd)
-CLASSPATH="$APP_HOME/gradle/wrapper/gradle-wrapper.jar"
-JAVA_EXE="java"
-if [ -n "$JAVA_HOME" ]; then
-  JAVA_EXE="$JAVA_HOME/bin/java"
-fi
-exec "$JAVA_EXE" -Dfile.encoding=UTF-8 -classpath "$CLASSPATH" org.gradle.wrapper.GradleWrapperMain "$@"
-""";
+        var gradlewBuilder = new StringBuilder();
+        gradlewBuilder.AppendLine("#!/bin/sh");
+        gradlewBuilder.AppendLine("APP_HOME=$(cd \"$(dirname \"$0\")\" && pwd)");
+        gradlewBuilder.AppendLine("CLASSPATH=\"$APP_HOME/gradle/wrapper/gradle-wrapper.jar\"");
+        gradlewBuilder.AppendLine("JAVA_EXE=\"java\"");
+        gradlewBuilder.AppendLine("if [ -n \"$JAVA_HOME\" ]; then");
+        gradlewBuilder.AppendLine("  JAVA_EXE=\"$JAVA_HOME/bin/java\"");
+        gradlewBuilder.AppendLine("fi");
+        gradlewBuilder.AppendLine("exec \"$JAVA_EXE\" -Dfile.encoding=UTF-8 -classpath \"$CLASSPATH\" org.gradle.wrapper.GradleWrapperMain \"$@\"");
+        var gradlew = gradlewBuilder.ToString();
 
-        var gradlewBat = """@ECHO OFF
-SET APP_HOME=%~dp0
-SET CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
-IF NOT "%JAVA_HOME%"=="" (
-  SET JAVA_EXE=%JAVA_HOME%\bin\java.exe
-) ELSE (
-  SET JAVA_EXE=java
-)
-"%JAVA_EXE%" -Dfile.encoding=UTF-8 -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %*
-""";
+        var gradlewBatBuilder = new StringBuilder();
+        gradlewBatBuilder.AppendLine("@ECHO OFF");
+        gradlewBatBuilder.AppendLine("SET APP_HOME=%~dp0");
+        gradlewBatBuilder.AppendLine("SET CLASSPATH=%APP_HOME%\\gradle\\wrapper\\gradle-wrapper.jar");
+        gradlewBatBuilder.AppendLine("IF NOT \"%JAVA_HOME%\"==\"\" (");
+        gradlewBatBuilder.AppendLine("  SET JAVA_EXE=%JAVA_HOME%\\bin\\java.exe");
+        gradlewBatBuilder.AppendLine(") ELSE (");
+        gradlewBatBuilder.AppendLine("  SET JAVA_EXE=java");
+        gradlewBatBuilder.AppendLine(")");
+        gradlewBatBuilder.AppendLine("\"%JAVA_EXE%\" -Dfile.encoding=UTF-8 -classpath \"%CLASSPATH%\" org.gradle.wrapper.GradleWrapperMain %*");
+        var gradlewBat = gradlewBatBuilder.ToString();
 
         File.WriteAllText(Path.Combine(projectDir, "gradlew"), gradlew, Encoding.UTF8);
         File.WriteAllText(Path.Combine(projectDir, "gradlew.bat"), gradlewBat, Encoding.UTF8);
@@ -185,12 +187,13 @@ IF NOT "%JAVA_HOME%"=="" (
             }
         }
 
-        var properties = $"""distributionBase=GRADLE_USER_HOME
-distributionPath=wrapper/dists
-distributionUrl=https\://services.gradle.org/distributions/gradle-{version}-bin.zip
-zipStoreBase=GRADLE_USER_HOME
-zipStorePath=wrapper/dists
-""";
+        var propertiesBuilder = new StringBuilder();
+        propertiesBuilder.AppendLine("distributionBase=GRADLE_USER_HOME");
+        propertiesBuilder.AppendLine("distributionPath=wrapper/dists");
+        propertiesBuilder.AppendLine($"distributionUrl=https\\://services.gradle.org/distributions/gradle-{version}-bin.zip");
+        propertiesBuilder.AppendLine("zipStoreBase=GRADLE_USER_HOME");
+        propertiesBuilder.AppendLine("zipStorePath=wrapper/dists");
+        var properties = propertiesBuilder.ToString();
 
         File.WriteAllText(Path.Combine(projectDir, "gradle", "wrapper", "gradle-wrapper.properties"), properties, Encoding.UTF8);
     }
