@@ -1,0 +1,87 @@
+
+<Window x:Class="PluginAutoMaker.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PluginAutoMaker.UI"
+        xmlns:conv="clr-namespace:PluginAutoMaker.UI.Converters"
+        mc:Ignorable="d"
+        Title="PluginAutoMaker" Height="720" Width="1200">
+    <Window.Resources>
+        <conv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+    </Window.Resources>
+    
+    <Grid Background="#FF0F172A" Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="4*" />
+            <ColumnDefinition Width="2*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Requirements Input -->
+        <Border Grid.Column="0" Margin="5" Padding="12" Background="#FF172A45" CornerRadius="12">
+            <DockPanel>
+                <TextBlock Text="要件テキスト" FontSize="16" FontWeight="Bold" Foreground="White" />
+                <CheckBox DockPanel.Dock="Bottom"
+                          Margin="0,0,0,8"
+                          Content="ソースをZipで出力する"
+                          Foreground="White"
+                          IsChecked="{Binding ZipSources}" />
+                <Button Content="生成＆ビルド＆テスト開始"
+                        Command="{Binding StartCommand}"
+                        Height="40"
+                        HorizontalAlignment="Stretch"
+                        IsEnabled="{Binding IsRunning, Converter={StaticResource InverseBooleanConverter}}"
+                        Margin="0,8,0,0"
+                        FontSize="14"
+                        FontWeight="Bold" />
+                <TextBox DockPanel.Dock="Bottom"
+                         Margin="0,12,0,8"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         MinHeight="200"
+                         Text="{Binding RequirementText, UpdateSourceTrigger=PropertyChanged}"
+                         FontFamily="Consolas"
+                         Background="#FF0F1B2E"
+                         Foreground="White"
+                         BorderBrush="#FF263B5A"/>
+            </DockPanel>
+        </Border>
+
+        <!-- Log Viewer -->
+        <Border Grid.Column="1" Margin="5" Padding="12" Background="#FF172A45" CornerRadius="12">
+            <DockPanel>
+                <TextBlock Text="ログ" FontSize="16" FontWeight="Bold" Foreground="White" />
+                <ScrollViewer x:Name="LogScrollViewer" DockPanel.Dock="Bottom" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="LogItemsControl" ItemsSource="{Binding Logs}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Message}"
+                                           Margin="0,2"
+                                           Foreground="{Binding Brush}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </DockPanel>
+        </Border>
+
+        <!-- Status Panel -->
+        <Border Grid.Column="2" Margin="5" Padding="12" Background="#FF172A45" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="ステータス" FontSize="16" FontWeight="Bold" Foreground="White" />
+                <ProgressBar Height="24" Margin="0,12,0,4" Value="{Binding ProgressValue, Mode=OneWay}" Maximum="1" />
+                <TextBlock Text="{Binding StatusMessage}" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8" />
+                <TextBlock Text="出力先" Foreground="White" FontWeight="SemiBold" />
+                <TextBox Text="{Binding OutputPath, Mode=OneWay}" IsReadOnly="True" Margin="0,4,0,8" Background="#FF0F1B2E" Foreground="White" BorderBrush="#FF263B5A"/>
+                <StackPanel Orientation="Vertical" Margin="0,12,0,0" >
+                    <Button Content="出力先を開く" Command="{Binding OpenOutputCommand}" IsEnabled="{Binding CanOpenOutput}" Margin="0,0,0,8" />
+                    <Button Content="ログをJSONで保存" Command="{Binding ExportLogCommand}" Margin="0,0,0,8" />
+                    <Button Content="設定" Command="{Binding OpenSettingsCommand}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>
