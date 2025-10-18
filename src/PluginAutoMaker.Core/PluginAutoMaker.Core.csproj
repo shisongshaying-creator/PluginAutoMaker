@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>PluginAutoMaker.Core</AssemblyName>
+    <RootNamespace>PluginAutoMaker.Core</RootNamespace>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PluginAutoMaker.Spec\PluginAutoMaker.Spec.csproj" />
+  </ItemGroup>
+</Project>
