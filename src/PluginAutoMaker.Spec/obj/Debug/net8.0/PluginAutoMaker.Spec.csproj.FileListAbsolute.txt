@@ -1,0 +1,12 @@
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\PluginAutoMaker.Spec.GeneratedMSBuildEditorConfig.editorconfig
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\PluginAutoMaker.Spec.AssemblyInfoInputs.cache
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\PluginAutoMaker.Spec.AssemblyInfo.cs
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\PluginAutoMaker.Spec.csproj.CoreCompileInputs.cache
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\PluginAutoMaker.Spec.sourcelink.json
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\bin\Debug\net8.0\PluginAutoMaker.Spec.deps.json
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\bin\Debug\net8.0\PluginAutoMaker.Spec.dll
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\bin\Debug\net8.0\PluginAutoMaker.Spec.pdb
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\PluginAutoMaker.Spec.dll
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\refint\PluginAutoMaker.Spec.dll
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\PluginAutoMaker.Spec.pdb
+C:\PluginAutoMaker\src\PluginAutoMaker.Spec\obj\Debug\net8.0\ref\PluginAutoMaker.Spec.dll
