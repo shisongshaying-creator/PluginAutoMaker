@@ -156,7 +156,7 @@ exec "$JAVA_EXE" -Dfile.encoding=UTF-8 -classpath "$CLASSPATH" org.gradle.wrappe
 
         var gradlewBat = """@ECHO OFF
 SET APP_HOME=%~dp0
-SET CLASSPATH=%APP_HOME%gradle\wrapper\gradle-wrapper.jar
+SET CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
 IF NOT "%JAVA_HOME%"=="" (
   SET JAVA_EXE=%JAVA_HOME%\bin\java.exe
 ) ELSE (
@@ -187,7 +187,7 @@ IF NOT "%JAVA_HOME%"=="" (
 
         var properties = $"""distributionBase=GRADLE_USER_HOME
 distributionPath=wrapper/dists
-distributionUrl=https://services.gradle.org/distributions/gradle-{version}-bin.zip
+distributionUrl=https\://services.gradle.org/distributions/gradle-{version}-bin.zip
 zipStoreBase=GRADLE_USER_HOME
 zipStorePath=wrapper/dists
 """;
