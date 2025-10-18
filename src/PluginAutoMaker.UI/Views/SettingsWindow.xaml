@@ -32,7 +32,7 @@
         <TextBlock Text="テストタイムアウト (秒)" Grid.Row="4" Grid.Column="0" Margin="0,0,12,12" VerticalAlignment="Center" />
         <TextBox Text="{Binding TestTimeoutSeconds}" Grid.Row="4" Grid.Column="1" Margin="0,0,0,12" />
 
-        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0" >
+        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0" Spacing="12">
             <Button Content="保存" Width="100" Click="OnSaveClick" IsDefault="True" />
             <Button Content="キャンセル" Width="100" Click="OnCancelClick" IsCancel="True" />
         </StackPanel>

@@ -5,8 +5,8 @@ namespace PluginAutoMaker.Spec.Generation;
 
 public sealed class RuleBasedSpecGenerator : ISpecGenerator
 {
-    private static readonly Regex PluginNameRegex = new("プラグイン名\\s*[:：]\\s*(?<name>[A-Za-z0-9_\\- ]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex VersionRegex = new("バージョン\\s*[:：]\\s*(?<ver>[0-9A-Za-z_.-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex PluginNameRegex = new("プラグイン名\s*[:：]\s*(?<name>[A-Za-z0-9_\- ]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex VersionRegex = new("バージョン\s*[:：]\s*(?<ver>[0-9A-Za-z_.-]+)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public Task<PluginSpecification> GenerateAsync(string requirementText, CancellationToken cancellationToken = default)
     {

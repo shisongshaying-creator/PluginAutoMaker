@@ -41,12 +41,12 @@ public sealed class PaperTestRunner : ITestRunner
         var javaHome = Environment.GetEnvironmentVariable("JAVA_HOME");
         var javaExecutable = string.IsNullOrWhiteSpace(javaHome)
             ? "java"
-            : Path.Combine(javaHome, OperatingSystem.IsWindows() ? "bin\\java.exe" : "bin/java");
+            : Path.Combine(javaHome, OperatingSystem.IsWindows() ? "bin\java.exe" : "bin/java");
 
         var startInfo = new ProcessStartInfo
         {
             FileName = javaExecutable,
-            Arguments = $"-jar {paperJar} nogui",
+            Arguments = $"-jar "{paperJar}" nogui",
             WorkingDirectory = serverDir,
             RedirectStandardInput = true,
             RedirectStandardOutput = true,

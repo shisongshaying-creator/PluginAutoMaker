@@ -72,7 +72,7 @@
         <Border Grid.Column="2" Margin="5" Padding="12" Background="#FF172A45" CornerRadius="12">
             <StackPanel>
                 <TextBlock Text="ステータス" FontSize="16" FontWeight="Bold" Foreground="White" />
-                <ProgressBar Height="24" Margin="0,12,0,4" Value="{Binding ProgressValue}" Maximum="1" />
+                <ProgressBar Height="24" Margin="0,12,0,4" Value="{Binding ProgressValue, Mode=OneWay}" Maximum="1" />
                 <TextBlock Text="{Binding StatusMessage}" Foreground="White" TextWrapping="Wrap" Margin="0,0,0,8" />
                 <TextBlock Text="出力先" Foreground="White" FontWeight="SemiBold" />
                 <TextBox Text="{Binding OutputPath}" IsReadOnly="True" Margin="0,4,0,8" Background="#FF0F1B2E" Foreground="White" BorderBrush="#FF263B5A"/>
