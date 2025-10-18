@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "FkFq3/eeb7I=",
+  "success": true,
+  "projectFilePath": "C:\\PluginAutoMaker\\src\\PluginAutoMaker.UI\\PluginAutoMaker.UI.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\PC_User\\.nuget\\packages\\microsoft.windows.sdk.net.ref\\10.0.19041.57\\microsoft.windows.sdk.net.ref.10.0.19041.57.nupkg.sha512"
+  ],
+  "logs": []
+}
