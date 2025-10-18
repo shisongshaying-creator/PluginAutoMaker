@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>PluginAutoMaker.Spec</AssemblyName>
+    <RootNamespace>PluginAutoMaker.Spec</RootNamespace>
+  </PropertyGroup>
+</Project>
